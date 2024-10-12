@@ -1,0 +1,30 @@
+name: services
+description: Services package
+version: 0.1.0+1
+publish_to: none
+
+environment:
+  sdk: ^3.4.0
+  flutter: ^3.22.0
+
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_secure_storage: ^8.1.0
+  shared_preferences: ^2.0.15
+  logger: 
+  freezed_annotation:
+  json_annotation:
+  freezed: ^2.3.2
+  get_it: ^7.6.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.4
+  very_good_analysis: ^6.0.0
+  build_runner: 2.4.6
+  freezed: ^2.4.5
+  json_serializable: ^6.7.1
+  flutter_lints: ^2.0.0

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/packages/common_features/melos_common_features.iml" filepath="$PROJECT_DIR$/packages/common_features/melos_common_features.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packages/core/melos_core.iml" filepath="$PROJECT_DIR$/packages/core/melos_core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packages/network/melos_network.iml" filepath="$PROJECT_DIR$/packages/network/melos_network.iml" />
+      <module fileurl="file://$PROJECT_DIR$/apps/repo/melos_repo.iml" filepath="$PROJECT_DIR$/apps/repo/melos_repo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packages/services/melos_services.iml" filepath="$PROJECT_DIR$/packages/services/melos_services.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packages/template/melos_template.iml" filepath="$PROJECT_DIR$/packages/template/melos_template.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packages/utils/melos_utils.iml" filepath="$PROJECT_DIR$/packages/utils/melos_utils.iml" />
+      <module fileurl="file://$PROJECT_DIR$/melos_swiftcommerce.iml" filepath="$PROJECT_DIR$/melos_swiftcommerce.iml" />
+    </modules>
+  </component>
+</project>
