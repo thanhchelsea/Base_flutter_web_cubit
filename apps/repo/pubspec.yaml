@@ -39,6 +39,8 @@ dependencies:
   syncfusion_flutter_charts: ^27.1.51
   excel: ^2.0.8
   file_picker: ^5.2.1
+  timelines: ^0.1.0
+  tab_container: ^3.5.3
 
   network:
     path: ../../packages/network

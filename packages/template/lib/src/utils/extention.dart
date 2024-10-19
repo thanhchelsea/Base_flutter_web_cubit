@@ -1,4 +1,4 @@
-import 'package:intl/intl.dart';
+part of template;
 
 extension DateTimeExt on DateTime {
   String formatDateTimeToddMMyyyy({String? formatString}) {

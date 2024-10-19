@@ -66,27 +66,31 @@ class _DataTableCustomState extends State<DataTableCustom> {
         topLeft: Radius.circular(widget.borderRadius ?? 8),
         topRight: Radius.circular(widget.borderRadius ?? 8),
       ),
-      child: DataTable2(
-        scrollController: widget.scrollController,
-        dataRowColor:
-            WidgetStateProperty.all(widget.backgoundColor ?? Colors.white),
-        columnSpacing: 12,
-        horizontalMargin: widget.paddingHorzi ?? 12,
-        minWidth: 600,
-        headingRowColor: WidgetStatePropertyAll(
-          widget.headingColor ?? _themeColorEx?.ksPrimary,
-        ),
-        headingTextStyle: const TextStyle(color: Colors.white),
-        dataRowHeight: widget.dataRowHeight,
-        // fixedColumnsColor: Colors.red,
-        isHorizontalScrollBarVisible: false,
-        isVerticalScrollBarVisible: true,
-        // columnSpacing: 12,
-        // horizontalMargin: 12,
-        columns: widget.columns,
-        showCheckboxColumn: false,
+      child: Container(
+        color: Colors.white,
+        child: DataTable2(
+          scrollController: widget.scrollController,
+          dataRowColor:
+              WidgetStateProperty.all(widget.backgoundColor ?? Colors.white),
+          columnSpacing: 12,
+          horizontalMargin: widget.paddingHorzi ?? 12,
+          minWidth: 600,
+          headingRowHeight: 40,
+          headingRowColor: WidgetStatePropertyAll(
+            widget.headingColor ?? _themeColorEx?.ksPrimary,
+          ),
+          headingTextStyle: const TextStyle(color: Colors.white),
+          dataRowHeight: widget.dataRowHeight,
+          // fixedColumnsColor: Colors.red,
+          isHorizontalScrollBarVisible: false,
+          isVerticalScrollBarVisible: true,
+          // columnSpacing: 12,
+          // horizontalMargin: 12,
+          columns: widget.columns,
+          showCheckboxColumn: false,
 
-        rows: widget.rows,
+          rows: widget.rows,
+        ),
       ),
     );
   }

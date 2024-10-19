@@ -29,7 +29,13 @@ class _AppBarCustomState extends State<AppBarCustom> {
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        boxShadow: [AppBoxShadow.ksSmallShadow()],
+        boxShadow: [
+          AppBoxShadow.ksSmallShadow(
+            blurRadius: 12,
+            spreadRadius: 0.2,
+            color: const Color.fromARGB(31, 197, 197, 197),
+          ),
+        ],
       ),
       child: Row(
         children: [

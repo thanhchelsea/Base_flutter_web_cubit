@@ -31,14 +31,15 @@ class SearchDropdown<T> extends StatefulWidget {
     this.isRequired,
     this.width,
     this.enable,
-    this.currentValue,
+    this.initValue,
     this.validator,
     this.showShadow = true,
     this.overlayHeight,
     this.canCloseOutsideBounds = true,
     this.onListChanged,
+    this.onDelete,
     this.initialItems,
-    this.currentValues,
+    this.initValues,
     this.singleSelectController,
     this.multiSelectController,
   });
@@ -49,12 +50,14 @@ class SearchDropdown<T> extends StatefulWidget {
   final BuilderSearchDropdown builderItems;
   final String? title;
   List<T>? values;
-  T? currentValue;
-  List<T>? currentValues;
+  T? initValue;
+  List<T>? initValues;
   bool showShadow;
   TypeDropdown typeDropdown;
   Function(dynamic?)? onChanged;
-  Function(List<dynamic>)? onListChanged;
+  Function(List<dynamic>, {bool? isDelete})? onListChanged;
+  Function(dynamic)? onDelete;
+
   String? Function(dynamic)? validator;
   bool canCloseOutsideBounds;
   double? overlayHeight;
@@ -70,29 +73,28 @@ class SearchDropdown<T> extends StatefulWidget {
 class _SearchDropdownState<T> extends State<SearchDropdown> {
   bool isLoading = false;
   List<dynamic>? data = [];
-  late SingleSelectController<T?>? singleSelectController;
-  late MultiSelectController<T>? multiSelectController;
+  SingleSelectController<T?>? singleSelectController;
+  MultiSelectController<T>? multiSelectController;
   @override
   void initState() {
     data = widget.values;
     if (widget.singleSelectController != null) {
       singleSelectController = (widget.singleSelectController!
-        ..value = widget.currentValue as T?) as SingleSelectController<T?>?;
+        ..value = widget.initValue as T?) as SingleSelectController<T?>?;
     } else {
-      singleSelectController =
-          SingleSelectController(widget.currentValue as T?);
+      singleSelectController = SingleSelectController(widget.initValue as T?);
     }
     if (widget.typeDropdown == TypeDropdown.multi_search ||
         // ignore: curly_braces_in_flow_control_structures
-        widget.typeDropdown == TypeDropdown.multi_search_request) if (widget
-            .multiSelectController !=
-        null) {
-      multiSelectController = (widget.multiSelectController!
-            ..value = (widget.initialItems ?? []) as List<T>)
-          as MultiSelectController<T>?;
-    } else {
-      multiSelectController =
-          MultiSelectController((widget.initialItems ?? []) as List<T>);
+        widget.typeDropdown == TypeDropdown.multi_search_request) {
+      if (widget.multiSelectController != null) {
+        multiSelectController = (widget.multiSelectController!)
+            // ..value = (widget.initialItems ?? <T>[]) as List<T>)
+            as MultiSelectController<T>?;
+      } else {
+        multiSelectController =
+            MultiSelectController((widget.initialItems ?? []) as List<T>);
+      }
     }
 
     super.initState();
@@ -102,16 +104,15 @@ class _SearchDropdownState<T> extends State<SearchDropdown> {
   void didUpdateWidget(covariant SearchDropdown oldWidget) {
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) {
-        if (oldWidget.currentValue != widget.currentValue ||
-            oldWidget.enable != widget.enable ||
-            oldWidget.values != widget.values ||
-            oldWidget.currentValues != widget.currentValues) {
+        if (oldWidget.enable != widget.enable ||
+            oldWidget.values != widget.values) {
           setState(() {
             data = widget.values;
           });
-          singleSelectController!.value = widget.currentValue as T?;
+          singleSelectController!.value = widget.initValue as T?;
           if (multiSelectController != null) {
-            multiSelectController?.value = widget.currentValues as List<T>;
+            multiSelectController?.value =
+                (widget.initValues as List<T>?) ?? [];
           }
         }
       },
@@ -124,7 +125,11 @@ class _SearchDropdownState<T> extends State<SearchDropdown> {
     return FormField(
       validator: (v) {
         if (widget.validator != null) {
-          return widget.validator!(singleSelectController?.value);
+          if (multiSelectController != null) {
+            return widget.validator!(multiSelectController?.value);
+          } else {
+            return widget.validator!(singleSelectController?.value);
+          }
         }
         return null;
       },
@@ -136,6 +141,7 @@ class _SearchDropdownState<T> extends State<SearchDropdown> {
               controller: singleSelectController,
               enabled: widget.enable ?? true,
               overlayHeight: widget.overlayHeight,
+
               closedHeaderPadding: const EdgeInsets.symmetric(
                 vertical: 8,
                 horizontal: 8,
@@ -284,7 +290,6 @@ class _SearchDropdownState<T> extends State<SearchDropdown> {
 
               // itemsListPadding: const EdgeInsets.only(bottom: 100),
               closeDropDownOnClearFilterSearch: true,
-              // initialItems: widget.initialItems as List<T>?,
               canCloseOutsideBounds: widget.canCloseOutsideBounds,
 
               headerListBuilder: (context, selectedItem, enabled) {
@@ -294,7 +299,7 @@ class _SearchDropdownState<T> extends State<SearchDropdown> {
                     (index) {
                       return Container(
                         constraints:
-                            const BoxConstraints(minWidth: 200, maxWidth: 500),
+                            const BoxConstraints(minWidth: 1, maxWidth: 500),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
                           color: Theme.of(context)
@@ -309,6 +314,7 @@ class _SearchDropdownState<T> extends State<SearchDropdown> {
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             widget.renderItem(selectedItem[index]),
                             const Gap(4),
@@ -322,7 +328,10 @@ class _SearchDropdownState<T> extends State<SearchDropdown> {
                                           .remove(selectedItem[index]);
                                     }
                                     widget.onListChanged?.call(
-                                        multiSelectController?.value ?? []);
+                                      multiSelectController?.value ?? [],
+                                      isDelete: true,
+                                    );
+                                    widget.onDelete?.call(selectedItem[index]);
                                   },
                                   child: Icon(
                                     Icons.clear,
@@ -378,7 +387,6 @@ class _SearchDropdownState<T> extends State<SearchDropdown> {
                     : null,
               ),
               canCloseOutsideBounds: widget.canCloseOutsideBounds,
-              // initialItems: widget.initialItems as List<T>?,
               headerListBuilder: (context, selectedItem, enabled) {
                 return Wrap(
                   children: List.generate(
@@ -414,7 +422,10 @@ class _SearchDropdownState<T> extends State<SearchDropdown> {
                                           .remove(selectedItem[index]);
                                     }
                                     widget.onListChanged?.call(
-                                        multiSelectController?.value ?? []);
+                                      multiSelectController?.value ?? [],
+                                      isDelete: true,
+                                    );
+                                    widget.onDelete?.call(selectedItem[index]);
                                   },
                                   child: Icon(
                                     Icons.clear,
@@ -459,7 +470,7 @@ class _SearchDropdownState<T> extends State<SearchDropdown> {
                     ),
                 ],
               ),
-            // const Gap(2),
+            const Gap(2),
             SizedBox(width: double.infinity, child: dropdown),
             const Gap(4),
             if (field.hasError)

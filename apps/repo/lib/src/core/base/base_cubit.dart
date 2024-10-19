@@ -89,7 +89,7 @@ abstract class BaseCubit<Y extends BaseState> extends Cubit<Y> {
                 onApiException: (apiException) {
                   errorType = ErrorType.api;
                   _showErrorToast(
-                    apiException.message ?? '',
+                    apiException.errors?.join(', ') ?? '',
                     isHasTrailingErrToast,
                   );
                   //todo access token expried

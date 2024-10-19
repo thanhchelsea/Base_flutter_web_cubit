@@ -1,3 +1,7 @@
+import 'package:animated_tree_view/tree_view/tree_node.dart';
+import 'package:animated_tree_view/tree_view/tree_view.dart';
+import 'package:animated_tree_view/tree_view/widgets/expansion_indicator.dart';
+import 'package:animated_tree_view/tree_view/widgets/indent.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +12,7 @@ import 'package:repo/src/features/app/cubit/app_cubit.dart';
 import 'package:repo/src/features/app/cubit/app_state.dart';
 import 'package:repo/src/injector/injector.dart';
 import 'package:repo/src/router/app_routes.dart';
+import 'package:repo/src/values/colors.dart';
 import 'package:sidebarx/sidebarx.dart';
 import 'package:template/template.dart';
 
@@ -18,9 +23,7 @@ const white = Colors.white;
 class ExampleSidebarX extends StatefulWidget {
   ExampleSidebarX({
     super.key,
-    required this.controller,
   });
-  final SidebarXController controller;
 
   @override
   State<ExampleSidebarX> createState() => _ExampleSidebarXState();
@@ -43,221 +46,11 @@ class _ExampleSidebarXState extends State<ExampleSidebarX> {
     return BlocBuilder<AppCubit, AppState>(
       bloc: _appCubit,
       buildWhen: (previous, current) =>
-          previous.sidebarMenu != current.sidebarMenu ||
-          previous.sidebarItemSelected != current.sidebarItemSelected,
+          previous.menuTree != current.menuTree ||
+          previous.featureSelected?.data?.pathRouter !=
+              current.featureSelected?.data?.pathRouter,
       builder: (context, state) {
-        return SidebarX(
-          controller: widget.controller,
-          theme: SidebarXTheme(
-            // margin: const EdgeInsets.all(10),
-            padding: EdgeInsets.all(0),
-            decoration: BoxDecoration(
-              color: themeColorExt?.ksBackground2,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            hoverColor: themeColorExt?.ksPrimary.withOpacity(0.3),
-            textStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
-            selectedTextStyle: const TextStyle(color: Colors.white),
-            hoverTextStyle: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w500,
-            ),
-            itemTextPadding: const EdgeInsets.only(left: 30),
-            selectedItemTextPadding: const EdgeInsets.only(left: 30),
-            itemDecoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: Colors.transparent,
-              ),
-            ),
-            selectedItemDecoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              border: (state.sidebarItemSelected?.subMenu?.isNotEmpty ?? false)
-                  ? null
-                  : Border.all(
-                      color: Colors.transparent,
-                    ),
-              gradient: (state.sidebarItemSelected?.subMenu?.isEmpty ?? true)
-                  ? const LinearGradient(
-                      colors: [
-                        Color(0xff7CA1FF),
-                        Color(0xff5566FF),
-                      ],
-                    )
-                  : null,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.12),
-                  blurRadius: 32,
-                )
-              ],
-            ),
-            iconTheme: IconThemeData(
-              color: Colors.white.withOpacity(0.7),
-              size: 20,
-            ),
-            selectedIconTheme: const IconThemeData(
-              color: Colors.white,
-              size: 20,
-            ),
-          ),
-          extendedTheme: SidebarXTheme(
-            width: 220,
-            decoration: BoxDecoration(
-              color: Color(0xff24244e)
-                  .withOpacity(1), // themeColorExt?.ksBackground2,
-            ),
-          ),
-          footerDivider: divider,
-          footerBuilder: (context, extended) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  onPressed: () async {
-                    await _appCubit.onDataCleared();
-                    context.replace(AppRoutes.signInPath);
-                  },
-                  icon: const Row(
-                    children: [
-                      Icon(
-                        Icons.logout,
-                        color: Colors.white,
-                        size: 18,
-                      ),
-                      Gap(12),
-                      Text(
-                        'Đăng xuất',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            );
-          },
-          showToggleButton: false,
-          headerBuilder: (context, extended) {
-            return Container(
-              padding: const EdgeInsets.all(16),
-              child: _renderUser(),
-            );
-          },
-          items: List.generate(
-            state.sidebarMenu.length,
-            (index) {
-              return SidebarXItem(
-                icon: state.sidebarMenu[index].icon,
-                label: state.sidebarMenu[index].label,
-                onTap: () {},
-                iconBuilder: state.sidebarMenu[index].subMenu != null
-                    ? (selected, hovered) {
-                        return Container(
-                          width: 220 - 26,
-                          padding: EdgeInsets.zero,
-                          child: ListTileTheme(
-                            contentPadding: EdgeInsets.zero,
-                            dense: true,
-                            minVerticalPadding: 0,
-                            horizontalTitleGap: 0.0,
-                            minLeadingWidth: 0,
-                            iconColor: Colors.white,
-                            child: ExpansionTile(
-                              trailing: Icon(
-                                !selected
-                                    ? Icons.keyboard_arrow_down
-                                    : Icons.keyboard_arrow_up,
-                                color: Colors.white,
-                                size: 16,
-                              ),
-                              shape: const Border(),
-                              iconColor: Colors.white,
-                              controller: state.sidebarMenu[index].expandCtrl,
-                              // enabled: false,
-                              childrenPadding: const EdgeInsets.all(0),
-                              tilePadding: const EdgeInsets.all(0),
-                              title: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Icon(
-                                    state.sidebarMenu[index].icon,
-                                    size: 16,
-                                    color: selected
-                                        ? Colors.white
-                                        : Colors.white.withOpacity(0.7),
-                                  ),
-                                  const Gap(22),
-                                  Expanded(
-                                    child: Text(
-                                      state.sidebarMenu[index].label ?? '',
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        color: selected
-                                            ? Colors.white
-                                            : Colors.white.withOpacity(0.7),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              children: List.generate(
-                                state.sidebarMenu[index].subMenu!.length,
-                                (i) {
-                                  return InkWell(
-                                    onTap: () {},
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(8),
-                                        color: state.sidebarItemSelected ==
-                                                state.sidebarMenu[index]
-                                                    .subMenu?[i]
-                                            ? themeColorExt?.ksInfo
-                                            : null,
-                                        boxShadow: (state.sidebarItemSelected ==
-                                                    state.sidebarMenu[index]
-                                                        .subMenu?[i] ??
-                                                false)
-                                            ? [
-                                                BoxShadow(
-                                                  color: Colors.black
-                                                      .withOpacity(0.12),
-                                                  blurRadius: 12,
-                                                )
-                                              ]
-                                            : null,
-                                      ),
-                                      width: double.infinity,
-                                      child: Text(
-                                        state.sidebarMenu[index].subMenu?[i]
-                                                .label ??
-                                            '',
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                              onExpansionChanged: (bool expanded) {
-                                if (expanded) {}
-                              },
-                            ),
-                          ),
-                        );
-                      }
-                    : null,
-              );
-            },
-          ),
-        );
+        return sideBar(state);
       },
     );
   }
@@ -280,7 +73,7 @@ class _ExampleSidebarXState extends State<ExampleSidebarX> {
                 )
               else
                 CircleAvatar(
-                  radius: 18,
+                  radius: 24,
                   foregroundImage: AssetImage(Assets.images.defaultAvatar.path),
                 ),
               const Gap(10),
@@ -289,10 +82,10 @@ class _ExampleSidebarXState extends State<ExampleSidebarX> {
                   '${_appCubit.state.userProfileEntity?.firstName}${_appCubit.state.userProfileEntity?.lastName}',
                   maxLines: 1,
                   style: textTheme.bodySmall?.copyWith(
-                    fontSize: 12,
+                    fontSize: 13,
                     fontWeight: FontWeight.w600,
                     overflow: TextOverflow.ellipsis,
-                    color: Colors.white,
+                    // color: Colors.white,
                   ),
                 ),
               ),
@@ -314,6 +107,162 @@ class _ExampleSidebarXState extends State<ExampleSidebarX> {
       ),
     );
   }
+
+  Widget sideBar(AppState state) {
+    return Container(
+      width: 250,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: const Border(
+            right: BorderSide(color: Color.fromARGB(31, 211, 211, 211))),
+        boxShadow: [
+          AppBoxShadow.ksSmallShadow(
+              color: const Color.fromARGB(31, 144, 144, 144)),
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(padding: const EdgeInsets.all(16), child: _renderUser()),
+          Expanded(
+            child: TreeView.simple<TreeNodeExt>(
+              tree: state.menuTree,
+              showRootNode: false,
+              indentation: const Indentation(width: 0),
+              expansionIndicatorBuilder: (context, node) {
+                return ChevronIndicator.rightDown(
+                  alignment: Alignment.centerLeft,
+                  tree: node,
+                  color: AppColors.primaryColor,
+                  icon: Icons.arrow_right_rounded,
+                );
+              },
+              onTreeReady: (controller) {
+                //todo check router
+                _appCubit.initTreeViewContrl(
+                  controller,
+                  context,
+                );
+              },
+              onItemTap: (item) {
+                _appCubit.onChangeFeature(item, context);
+              },
+              builder: (context, node) {
+                final isSelected = node.data == state.featureSelected?.data;
+                final isExpanded = node.isExpanded;
+                return MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: Container(
+                    // height: 42,
+                    width: 250,
+                    // color: node.level >= 2 || isExpanded
+                    //     ? Color.fromARGB(255, 248, 250, 255)
+                    //     : null,
+                    alignment: Alignment.center,
+                    child: Padding(
+                      padding: node.level >= 2
+                          ? const EdgeInsets.only(left: 27)
+                          : const EdgeInsets.only(),
+                      child: Container(
+                        width: 250,
+                        height: 45, // The size dimension of the active button
+                        alignment: Alignment.centerLeft,
+                        decoration: BoxDecoration(
+                          gradient: isSelected
+                              ? node.isLeaf
+                                  ? const LinearGradient(
+                                      colors: [
+                                        Color.fromARGB(255, 240, 244, 255),
+                                        Color.fromARGB(255, 207, 221, 255),
+                                      ],
+                                    )
+                                  : null
+                              : null,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(
+                              50,
+                            ),
+                            bottomLeft: Radius.circular(
+                              50,
+                            ),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            left: 25,
+                          ),
+                          child: node.level >= 2
+                              ? Text(
+                                  node.data?.name ?? '',
+                                  style: TextStyle(
+                                    color: isSelected
+                                        ? AppColors.primaryColor
+                                        : null,
+                                    fontWeight:
+                                        isSelected ? FontWeight.w600 : null,
+                                    fontSize: 13,
+                                  ),
+                                )
+                              : Row(
+                                  children: [
+                                    Icon(
+                                      node.data?.icon?.icon,
+                                      size: 16,
+                                      color: isSelected
+                                          ? AppColors.primaryColor
+                                          : Colors.black54,
+                                    ),
+                                    const SizedBox(
+                                      width: 12,
+                                    ),
+                                    Text(
+                                      node.data?.name ?? '',
+                                      style: TextStyle(
+                                        color: isSelected
+                                            ? AppColors.primaryColor
+                                            : null,
+                                        fontWeight:
+                                            isSelected ? FontWeight.w600 : null,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class TreeNodeExt extends Equatable {
+  String? pathRouter;
+  String? parentPathRouter;
+  Icon? icon;
+  String name;
+  TreeNodeExt({
+    required this.name,
+    String? key,
+    dynamic data,
+    this.pathRouter,
+    this.icon,
+    this.parentPathRouter,
+  });
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [
+        pathRouter,
+        parentPathRouter,
+        icon,
+        name,
+      ];
 }
 
 class SidebarXItemModel extends Equatable {

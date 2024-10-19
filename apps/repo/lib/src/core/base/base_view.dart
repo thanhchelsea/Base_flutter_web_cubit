@@ -3,6 +3,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:repo/src/features/app/cubit/app_cubit.dart';
+import 'package:repo/src/features/app/cubit/app_state.dart';
+import 'package:repo/src/widgets/sidebar.dart';
 import 'package:template/template.dart';
 import 'base_cubit.dart';
 import 'base_state.dart';
@@ -22,6 +25,7 @@ class BaseView<C extends BaseCubit<S>, S extends BaseState>
     this.showBoxSearchCenterAppBar = false,
     this.onChangeBoxSearchCenterAppBar,
     this.showAppbar = true,
+    this.isShowSideBar = false,
   });
 
   final Widget Function(BuildContext context, S state) builder;
@@ -30,7 +34,7 @@ class BaseView<C extends BaseCubit<S>, S extends BaseState>
   final Color? colorBarrier;
   final Color? backgroundColor;
   final bool? resizeToAvoidBottomInset;
-
+  final bool isShowSideBar;
 //appbar
   bool showAppbar;
   Widget? centerWidgetAppbar;
@@ -51,40 +55,59 @@ class BaseView<C extends BaseCubit<S>, S extends BaseState>
       body: SelectableRegion(
         focusNode: FocusNode(),
         selectionControls: emptyTextSelectionControls,
-        child: Stack(
+        child: Row(
           children: [
-            Column(
-              children: [
-                if (showAppbar)
-                  AppBarCustom(
-                    actions: appBarActions,
-                    centerWidget: centerWidgetAppbar,
-                    onChangeBoxSearchCenter: onChangeBoxSearchCenterAppBar,
-                    showBoxSearchCenter: showBoxSearchCenterAppBar,
+            if (isShowSideBar) ExampleSidebarX(),
+            Expanded(
+              child: Stack(
+                children: [
+                  Column(
+                    children: [
+                      if (showAppbar)
+                        BlocBuilder<AppCubit, AppState>(
+                          builder: (context, state) {
+                            return AppBarCustom(
+                              actions: appBarActions,
+                              centerWidget: centerWidgetAppbar,
+                              onChangeBoxSearchCenter:
+                                  onChangeBoxSearchCenterAppBar,
+                              showBoxSearchCenter: showBoxSearchCenterAppBar,
+                              currentPageNamed: Text(
+                                state.currentPageNamed,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      Expanded(child: builder(context, cubit.state)),
+                    ],
                   ),
-                Expanded(child: builder(context, cubit.state)),
-              ],
-            ),
-            BlocConsumer<C, S>(
-              bloc: cubit,
-              buildWhen: (previous, current) {
-                return previous.pageState != current.pageState;
-              },
-              builder: (context, state) {
-                if (state.pageState == PageState.LOADING) {
-                  return _showLoading(context);
-                }
-                return Container();
-              },
-              listenWhen: (previous, current) {
-                return previous.errorType != current.errorType;
-              },
-              listener: (BuildContext context, S state) {
-                if (state.errorType == ErrorType.unauthorized) {
-                  //todo dieu huong man hinh sang man hinh dang nhap
-                  // context.go(AppRouter.loginPath);
-                }
-              },
+                  BlocConsumer<C, S>(
+                    bloc: cubit,
+                    buildWhen: (previous, current) {
+                      return previous.pageState != current.pageState;
+                    },
+                    builder: (context, state) {
+                      if (state.pageState == PageState.LOADING) {
+                        return _showLoading(context);
+                      }
+                      return Container();
+                    },
+                    listenWhen: (previous, current) {
+                      return previous.errorType != current.errorType;
+                    },
+                    listener: (BuildContext context, S state) {
+                      if (state.errorType == ErrorType.unauthorized) {
+                        //todo dieu huong man hinh sang man hinh dang nhap
+                        // context.go(AppRouter.loginPath);
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
           ],
         ),

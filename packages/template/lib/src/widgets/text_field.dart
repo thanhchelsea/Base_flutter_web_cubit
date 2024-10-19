@@ -254,7 +254,9 @@ class _PuTextField extends State<AppTextField> {
           decoration: BoxDecoration(
             borderRadius: widget.borderRadius,
             boxShadow: widget.enable
-                ? (widget.showShadow! ? [AppBoxShadow.ksSmallShadow()] : null)
+                ? (widget.showShadow!
+                    ? [AppBoxShadow.ksSmallShadow(blurRadius: 5)]
+                    : null)
                 : null,
           ),
           child: TextFormField(

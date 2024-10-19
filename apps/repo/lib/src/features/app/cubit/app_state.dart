@@ -1,3 +1,5 @@
+import 'package:animated_tree_view/tree_view/tree_node.dart';
+import 'package:animated_tree_view/tree_view/tree_view.dart';
 import 'package:common_features/auth/domain/entity/user_profile/user_profile_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:repo/src/core/base/base_state.dart';
@@ -46,8 +48,11 @@ class AppState extends BaseState {
     this.themeData = ThemeSetting.light,
     this.isLoaded = false,
     this.userProfileEntity,
-    this.sidebarItemSelected,
-    this.sidebarMenu = const [],
+    // this.sidebarMenu = const [],
+    this.currentPageNamed = '',
+    required this.menuTree,
+    this.treeViewController,
+    this.featureSelected,
   });
 
   final String locale;
@@ -55,9 +60,10 @@ class AppState extends BaseState {
   final String? accestoken;
   bool? isLoaded;
   final UserProfileEntity? userProfileEntity;
-  SidebarXItemModel? sidebarItemSelected;
-  List<SidebarXItemModel> sidebarMenu;
-
+  String currentPageNamed;
+  TreeNode<TreeNodeExt> menuTree;
+  TreeNode<TreeNodeExt>? featureSelected;
+  TreeViewController<TreeNodeExt, TreeNode<TreeNodeExt>>? treeViewController;
   @override
   AppState copyWith({
     PageState? pageState,
@@ -69,7 +75,11 @@ class AppState extends BaseState {
     bool? isLoaded,
     SidebarXItemModel? sidebarItemSelected,
     UserProfileEntity? userProfileEntity,
-    List<SidebarXItemModel>? sidebarMenu,
+    // List<SidebarXItemModel>? sidebarMenu,
+    TreeNode<TreeNodeExt>? menuTree,
+    String? currentPageNamed,
+    TreeViewController<TreeNodeExt, TreeNode<TreeNodeExt>>? treeViewController,
+    TreeNode<TreeNodeExt>? featureSelected,
   }) {
     return AppState(
       pageState: pageState ?? this.pageState,
@@ -80,8 +90,11 @@ class AppState extends BaseState {
       accestoken: accestoken ?? this.accestoken,
       isLoaded: isLoaded ?? this.isLoaded,
       userProfileEntity: userProfileEntity ?? this.userProfileEntity,
-      sidebarItemSelected: sidebarItemSelected ?? this.sidebarItemSelected,
-      sidebarMenu: sidebarMenu ?? this.sidebarMenu,
+      // sidebarMenu: sidebarMenu ?? this.sidebarMenu,
+      menuTree: menuTree ?? this.menuTree,
+      currentPageNamed: currentPageNamed ?? this.currentPageNamed,
+      treeViewController: treeViewController ?? this.treeViewController,
+      featureSelected: featureSelected ?? this.featureSelected,
     );
   }
 
@@ -100,7 +113,7 @@ class AppState extends BaseState {
         accestoken,
         isLoaded,
         userProfileEntity,
-        sidebarItemSelected,
-        sidebarMenu,
+        // sidebarMenu,
+        menuTree, currentPageNamed, treeViewController, featureSelected,
       ];
 }

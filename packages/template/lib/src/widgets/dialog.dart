@@ -63,9 +63,20 @@ class BaseDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Stack(
+            Column(
               children: [
-                if (showPopIcon) _buildPopIcon(context, themeColor),
+                Container(
+                  padding: const EdgeInsets.only(left: 6, top: 6, right: 6),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // if (customTitle == null) Gap(14),
+                      iconDialog ?? Container(),
+                      if (showPopIcon) _buildPopIcon(context, themeColor),
+                    ],
+                  ),
+                ),
                 Align(
                   child: Container(
                     padding: EdgeInsets.symmetric(
@@ -83,22 +94,18 @@ class BaseDialog extends StatelessWidget {
   }
 
   Widget _buildPopIcon(BuildContext context, ThemeColorExtension? themeColor) {
-    return Positioned(
-      top: 4,
-      right: 4,
-      child: SizedBox(
-        width: 30,
-        height: 30,
-        child: Padding(
-          padding: const EdgeInsets.all(3),
-          child: IconButton(
-            padding: EdgeInsets.zero,
-            onPressed: Navigator.of(context).pop,
-            icon: const Icon(
-              Icons.clear,
-              size: 22,
-              // color: themeColor?.iconColorDefault,
-            ),
+    return SizedBox(
+      width: 30,
+      height: 30,
+      child: Padding(
+        padding: const EdgeInsets.all(3),
+        child: IconButton(
+          padding: EdgeInsets.zero,
+          onPressed: Navigator.of(context).pop,
+          icon: const Icon(
+            Icons.clear,
+            size: 22,
+            // color: themeColor?.iconColorDefault,
           ),
         ),
       ),
@@ -174,10 +181,9 @@ class BaseDialog extends StatelessWidget {
     ThemeColorExtension? themeColor,
   ) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (customTitle == null) Gap(14),
-        iconDialog ?? Container(),
         if (customTitle == null) Gap(12),
         _buildTitle(context),
         Gap(8),
@@ -196,39 +202,35 @@ class BaseDialog extends StatelessWidget {
           padding: paddingAction ?? const EdgeInsets.all(0),
           child: customAction ??
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   if (showLeftButton)
-                    Expanded(
-                      child: _buildDialogButton(
-                        showBorder: false,
-                        context: context,
+                    _buildDialogButton(
+                      showBorder: false,
+                      context: context,
 
-                        title: leftButtonTitle ?? "Cancel",
-                        backgroundColor: Colors.black12,
-                        // width: 180,
-                        // height: 40,
-                        textColor: Color(0xff242628) ?? Colors.black,
-                        onTap: onLeftButtonClick,
-                        themeColor: themeColor,
-                      ),
+                      title: leftButtonTitle ?? "Cancel",
+                      backgroundColor: Colors.black12,
+                      // width: 180,
+                      // height: 40,
+                      textColor: Color(0xff242628) ?? Colors.black,
+                      onTap: onLeftButtonClick,
+                      themeColor: themeColor,
                     ),
                   if (showLeftButton) SizedBox(width: 10),
                   if (showRightButton)
-                    Expanded(
-                      child: _buildDialogButton(
-                        showBorder: false,
-                        context: context,
-                        // iconButton: rightIconButton ?? const Icon(Icons.check),
-                        title: rightButtonTitle ?? "Confirm",
-                        backgroundColor: themeColor?.ksPrimary ??
-                            Theme.of(context).colorScheme.primary,
-                        // width: 180,
-                        // height: 40,
-                        textColor: Colors.white,
-                        onTap: onRightButtonClick,
-                        themeColor: themeColor,
-                      ),
+                    _buildDialogButton(
+                      showBorder: false,
+                      context: context,
+                      // iconButton: rightIconButton ?? const Icon(Icons.check),
+                      title: rightButtonTitle ?? "Confirm",
+                      backgroundColor: themeColor?.ksPrimary ??
+                          Theme.of(context).colorScheme.primary,
+                      // width: 180,
+                      // height: 40,
+                      textColor: Colors.white,
+                      onTap: onRightButtonClick,
+                      themeColor: themeColor,
                     ),
                 ],
               ),

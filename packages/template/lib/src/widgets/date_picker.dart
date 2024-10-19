@@ -73,8 +73,12 @@ class _DatePickerFieldState extends State<DatePickerField> {
                     text: TextSpan(
                       children: [
                         TextSpan(
-                            text: widget.title,
-                            style: TextStyle(overflow: TextOverflow.ellipsis)),
+                          text: widget.title,
+                          style: const TextStyle(
+                            overflow: TextOverflow.ellipsis,
+                            color: Colors.black38,
+                          ),
+                        ),
                         if (widget.isRequired)
                           const TextSpan(
                             text: "*",

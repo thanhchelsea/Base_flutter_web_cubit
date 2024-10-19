@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:network/src/constants/constant.dart';
+import 'package:network/src/model/page.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 Logger logger = Logger();
@@ -93,26 +94,42 @@ class DioModule {
     Response<dynamic> e,
     ResponseInterceptorHandler handler,
   ) {
-    if (e.data['status'] != ResponseConfig.success) {
-      debugPrint('API ERROR: ${e.data['status']}');
+    if (e.data['succeeded'] != ResponseConfig.success) {
+      debugPrint('API ERROR: ${e.data['succeeded']}');
       handler.reject(
         DioException(
           requestOptions: RequestOptions(),
           response: Response(
             requestOptions: RequestOptions(),
-            statusMessage: e.data['message'] as String?,
+            statusMessage: (e.data['errors'] as List<String>).join(' ,'),
             // statusCode: e.data['status'],
             data: e.data,
           ),
         ),
       );
     } else {
-      debugPrint('API SUCCESSFULLY: ${e.data['status']}');
+      debugPrint('API SUCCESSFULLY: ${e.data['succeeded']}');
       final response = Response(
-        data: e.data['data'],
+        data: e.data,
         requestOptions: RequestOptions(),
       );
+      // final response = MoonResponse(
+      //   page: e.data['page'] != null
+      //       ? Page.fromJson(e.data['page'] as Map<String, dynamic>)
+      //       : null,
+      //   requestOptions: RequestOptions(),
+      //   data: e.data['data'],
+      // );
       handler.next(response);
     }
   }
+}
+
+class MoonResponse extends Response {
+  Page? page;
+  MoonResponse({
+    this.page,
+    required super.requestOptions,
+    required super.data,
+  });
 }

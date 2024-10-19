@@ -3,6 +3,6 @@ class DioConfig {
 }
 
 class ResponseConfig {
-  static String success = "success";
-  static String fail = "fail";
+  static bool success = true;
+  static bool fail = fail;
 }

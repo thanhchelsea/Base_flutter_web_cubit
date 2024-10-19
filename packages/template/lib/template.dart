@@ -7,9 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
+import 'package:intl/intl.dart';
 import 'package:template/generated/assets.gen.dart';
 import 'package:template/helper/helper.dart';
-import 'package:template/src/utils/extention.dart';
 part 'src/widgets/toast.dart';
 part 'src/values/colors.dart';
 part 'src/widgets/text_field.dart';
@@ -26,3 +26,6 @@ part 'src/widgets/menu_anchor.dart';
 part 'src/widgets/quantity_input.dart';
 part 'src/widgets/search_dropdown.dart';
 part 'src/widgets/status_item.dart';
+part 'src/widgets/info_item.dart';
+
+part 'src/utils/extention.dart';
